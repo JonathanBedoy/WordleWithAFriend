@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for WordleWithFriends",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Bedoy",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "connect-history-api-fallback": "^1.6.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.2",
+    "randomstring": "^1.2.2",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
+  }
+}
