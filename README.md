@@ -4,6 +4,9 @@
 
 Classic game of wordle, but with a multiplayer element to it. This web app is a recreation of the famous web-based word game, with a twist, It also allows the user to play with their friend. Each player receives one guess per turn, until the word is guessed correctly. The web app uses a faithful style to the original "singleplayer" game. This is basically an implementaion of Wordle with multiplayer funtionality. Using various APIs, a random somewhat common five-letter word is chosen. The user can only guess valid words from the dictionary.
 
+### Try it out [here](https://wordle.jonathanbedoy.com)
+
+
 ## Features:
 
 - Full Wordle Game
