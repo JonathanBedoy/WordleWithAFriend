@@ -1,17 +1,29 @@
-# wordle-with-friend
+# Wordle With a Friend
 
-### Requires a backend located on Backend folder
+### Back-End
 
-## Project setup
-```
+
+
+
+#### Requirements:
+
+- Requires the FrontEnd build to be put inside ``/public`` (more info on how to build the frontend located at ``../FrontEnd``).
+
+#### Must Install dependencies:
+
+```sh
 npm install
 ```
 
-### Runs the Backend
+### Runs the BackEnd
+
 ```
-node sockPrac.js
+node ./app.js
 ```
 
-Included is the wordle with friends full build.
-
-Runs on port 5005 by default, can change on sockPrac.js file.
+[//]: #
+   [React Bootstrap]: <https://react-bootstrap.github.io>
+   [Node.js]: <http://nodejs.org>
+   [NeDB]: <https://github.com/louischatriot/nedb>
+   [express]: <http://expressjs.com>
+   [React Js]: <https://reactjs.org/>
