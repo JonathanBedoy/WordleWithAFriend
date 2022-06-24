@@ -65,6 +65,7 @@ io.on("connection", function (socket) {
       });
       if (rooms[roomCode].users.length == 2) {
         rooms[roomCode].currentlyActive = true;
+        rooms[roomCode].currState.gameWaitState = false
         io.to(roomCode).emit("startLobby", { turn: rooms[roomCode].users[0] });
       }
     }
@@ -78,7 +79,12 @@ io.on("connection", function (socket) {
     ) {
       socket.join(roomCode);
       console.log("user is rejoing room");
+      // console.log
       socket.emit("updateBoard", getCurrStateWithProperUserInfo(roomCode, userId));
+      if(shouldUserInit(roomCode, userId)) {
+        socket.emit("sendYourInit");
+        // TODO: send out: this user should send out init
+      }
       // socket.broadcast.to(roomCode).emit("sendOutCurrentGame", data);
     }
   });
@@ -161,6 +167,7 @@ io.on("connection", function (socket) {
 
   socket.on("cancelGame", (data) => {
     // socket.leave(data.roomNum);
+    delete rooms[data.roomNum]
     io.to(data.roomNum).emit("resetClient");
   });
 });
@@ -180,6 +187,7 @@ let createRoom = (customRoomNum=-1) => {
     b=customRoomNum
   }
   rooms[b] = {
+    hasBeenInit: false,
     users: [],
     currentlyActive: false,
     currState: {
@@ -210,6 +218,7 @@ let createRoom = (customRoomNum=-1) => {
 
 let initRoom = (b, options) => {
   if(rooms[b]) {
+    rooms[b].hasBeenInit = true
     rooms[b].currState = {
       lettersUsed: {
         correct: [],
@@ -229,6 +238,14 @@ let initRoom = (b, options) => {
       }
     }
   }
+}
+
+const shouldUserInit = (b, userId) => {
+  if (!rooms[b].hasBeenInit && rooms[b].users[0] == userId) {
+    console.log('user should init')
+    return true;
+  }
+  return false;
 }
 
 let updateState = (b, options) => {

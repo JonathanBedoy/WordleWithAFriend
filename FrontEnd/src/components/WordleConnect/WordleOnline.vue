@@ -1,31 +1,13 @@
 <template>
   <!-- TODO: rock paper scissors choose who goes first -->
   <div class="container-fluid mainBody m-0 p-0">
-    <wordle-menu
-      @leaveGame="leaveGame"
-      @menuOptions="initializeUser"
-      :lobbyCode="lobbyCode"
-      :gameWaitState="gameWaitState"
-      :userInfo="userInfo"
-      @playAgain="playAgain"
-      :endGameStateResult="gameStateResult"
-      :endGameState="gameState"
-      :menuOpen="showMenuOptions"
-    />
-    <WordleContainer
-      @leaveGame="leaveGame"
-      :playRevealAnimation="playRowRevealAnimation"
-      :shakeRow="shakeWordleRow"
-      :userInfo="userInfo"
-      @keyboardInput="inputReceived"
-      :lettersUsed="lettersUsed"
-      :word="wordBeingPlayed"
-      :socket="socket"
-      :listOfGuesses="listOfGuesses"
-      :maxLenWord="maxLenWord"
-      :wordGuessed="wordGuessed"
-      :gameCompleted="gameCompleted"
-    />
+    <wordle-menu @leaveGame="leaveGame" @menuOptions="initializeUser" :lobbyCode="lobbyCode"
+      :gameWaitState="gameWaitState" :userInfo="userInfo" @playAgain="playAgain" :endGameStateResult="gameStateResult"
+      :endGameState="gameState" :menuOpen="showMenuOptions" />
+    <WordleContainer @leaveGame="leaveGame" :playRevealAnimation="playRowRevealAnimation" :shakeRow="shakeWordleRow"
+      :userInfo="userInfo" @keyboardInput="inputReceived" :lettersUsed="lettersUsed" :word="wordBeingPlayed"
+      :socket="socket" :listOfGuesses="listOfGuesses" :maxLenWord="maxLenWord" :wordGuessed="wordGuessed"
+      :gameCompleted="gameCompleted" />
     <!-- <div class="button" @click="(getGameFromOtherUser())">click</div> -->
     <!-- <button @click="eraseLocalStor()">Menu</button> -->
     <!-- <button @click="socketEndpoint = 'localhost:5005'">Change Endpoint</button> -->
@@ -60,7 +42,7 @@ export default {
 
     this.wordBeingPlayed =
       this.playableWordList[
-        Math.floor(Math.random() * this.playableWordList.length - 1)
+      Math.floor(Math.random() * this.playableWordList.length - 1)
       ];
     // console.log(this.wordBeingPlayed);
     this.lobbyCurrentlyActive = window.localStorage.getItem(
@@ -139,7 +121,7 @@ export default {
       console.log("playing agaim");
       this.wordBeingPlayed =
         this.playableWordList[
-          Math.floor(Math.random() * this.playableWordList.length - 1)
+        Math.floor(Math.random() * this.playableWordList.length - 1)
         ];
       this.socket.emit("joinRoom", {
         roomCode: this.lobbyCode,
@@ -160,7 +142,7 @@ export default {
     initializeUser(isHosting = false, roomCode = "") {
       this.wordBeingPlayed =
         this.playableWordList[
-          Math.floor(Math.random() * this.playableWordList.length - 1)
+        Math.floor(Math.random() * this.playableWordList.length - 1)
         ];
 
       if (isHosting) {
@@ -263,10 +245,15 @@ export default {
         window.localStorage.setItem("gameWaitState", this.gameWaitState);
         this.gameState = false;
         this.userInfo.myTurn = turn == this.userInfo.userId;
+        // since the user is DC'd, they will not be able to init the wordle.
+        // possible fixes
+        // both users send an init, first one to send it, will get the init.
+        // this is not based on whoever's turn it currently is
+        // update the board as soon as the other user re-joins the lobby.
         if (turn == this.userInfo.userId) {
           this.wordBeingPlayed =
             this.playableWordList[
-              Math.floor(Math.random() * this.playableWordList.length - 1)
+            Math.floor(Math.random() * this.playableWordList.length - 1)
             ];
           this.socket.emit("sendInitWordle", {
             maxLenWord: this.maxLenWord,
@@ -290,6 +277,32 @@ export default {
       });
       this.socket.on("initWordle", (data) => {
         this.initializeWordle(data);
+      });
+      this.socket.on("sendYourInit", () => {
+        this.lobbyCurrentlyActive = true;
+        window.localStorage.setItem(
+          "lobbyCurrentlyActive",
+          this.lobbyCurrentlyActive
+        );
+        console.log("starting Lobby");
+        this.showMenuOptions = false;
+        this.gameWaitState = false;
+        window.localStorage.setItem("gameWaitState", this.gameWaitState);
+        this.gameState = false;
+        this.userInfo.myTurn = true;
+        // TODO: implement client sending out the init
+        this.wordBeingPlayed =
+          this.playableWordList[
+          Math.floor(Math.random() * this.playableWordList.length - 1)
+          ];
+        this.socket.emit("sendInitWordle", {
+          maxLenWord: this.maxLenWord,
+          wordBeingPlayed: this.wordBeingPlayed,
+          gameCompleted: false,
+          roomNum: this.lobbyCode,
+          userInfo: this.userInfo,
+        });
+        // this.initializeWordle(data);
       });
       // updates the current word being played
       this.socket.on("updateCurrentWord", (data) => {
@@ -440,10 +453,10 @@ export default {
 
           setTimeout(() => {
             this.playRowRevealAnimation = false;
-            
+
             if (currMyTurn) {
               this.listOfGuesses.push(this.wordGuessed);
-              
+
               this.updateLettersUsed();
               this.wordGuessed = "";
               console.log("sending user turns");
@@ -507,7 +520,7 @@ export default {
         } else if (this.wordBeingPlayed.indexOf(letter) != -1) {
           if (
             this.lettersUsed.almostCorrect.findIndex((val) => val == letter) ==
-              -1 &&
+            -1 &&
             this.lettersUsed.correct.findIndex((val) => val == letter) == -1
           ) {
             this.lettersUsed.almostCorrect.push(letter);
