@@ -5,9 +5,10 @@ Classic game of wordle, but with a multiplayer element to it. This web app is a 
 
 ### Try it out [here](https://wordle.jonathanbedoy.com)
 ##### Guest Login: 
+```
 - user: guest
 - password: password
-
+```
 
 ## Features:
 
